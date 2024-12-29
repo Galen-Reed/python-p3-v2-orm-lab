@@ -187,4 +187,13 @@ class Employee:
 
     def reviews(self):
         """Return list of reviews associated with current employee"""
-        pass
+        from review import Review
+        sql = "SELECT * FROM reviews WHERE employee_id = ?"
+        rows = CURSOR.execute(sql, (self.id,)).fetchall()
+        print(f"Debug: rows for employee_id {self.id}: {rows}")
+        return [Review.instance_from_db(row) for row in rows]
+    
+    @classmethod
+    def exists(cls, employee_id):
+        sql = "SELECT id FROM employees WHERE id = ?"
+        return CURSOR.execute(sql, (employee_id,)).fetchone() is not None
